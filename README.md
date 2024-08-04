@@ -8,6 +8,8 @@ Put the `amines.bin` file in your `\bin` directory to run from there. When you r
 
 Within the game you can use `?` to get help.
 
+The game provides some examples of using the Agon native C libary featuers as well as abstracting them via the acurses library.
+
 ## configuration file
 You can specify a config file using `-s filename` at the prompt. The default file is .aminesrc in the current directory. The file allows you to add additional levels, or change the currently available levels.
 
