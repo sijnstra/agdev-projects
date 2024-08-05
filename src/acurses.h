@@ -116,7 +116,7 @@ int addstr(const char *str);
 short global_color_pairs [COLOR_PAIRS*2];	//global to acurses only
 
 	volatile SYSVAR *sv;
-	char *_curse_buf[512];
+	char _curse_buf[512];
 
 void start_color() {
 	// This routine is supposed to define the global variable for number of colours and number of colour pairs
@@ -171,9 +171,10 @@ int getmaxx(int win)
 	return sv->scrCols;
 };
 
-// technically we can change colours, but let's not do that yet.
+// technically we can change colours, but I'm not going to make sure the color provided is valid.
 int init_color(short color, short r, short g, short b) {
-	return false;
+	vdp_define_colour(color, 255, r, g, b);
+	return true;
 };
 
 bool has_colors(void) {
@@ -296,11 +297,16 @@ int refresh(void)
 	return true;
 };
 
+//dump font and reset text mode to bright white on black. NOTE: assumes video mode has at least 16 colours
 int endwin(void)
 {
+	vdp_reset_system_font();
+	vdp_set_text_colour( COLOR_WHITE + 8 );
+	vdp_set_text_colour( COLOR_BLACK + COLOR_BG);
 	return true;
 };
 
+//if we always return true, then endwin should be executed
 int isendwin(void)
 {
 	return true;
@@ -329,7 +335,7 @@ int attroff(int attrs)
 	return true;
 };
 
-int attr_get (attr_t attr, int n, int m)
+int attr_get (attr_t *attr, int *n, int *m)
 {
 	return false;
 };
