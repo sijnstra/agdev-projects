@@ -115,8 +115,8 @@ int addstr(const char *str);
 
 short global_color_pairs [COLOR_PAIRS*2];	//global to acurses only
 
-	volatile SYSVAR *sv;
-	char _curse_buf[512];
+static SYSVAR *sv;
+char _curse_buf[512];
 
 void start_color() {
 	// This routine is supposed to define the global variable for number of colours and number of colour pairs

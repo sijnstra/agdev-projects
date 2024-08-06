@@ -738,7 +738,8 @@ int main(int argc, char *argv[])
     startupdata	start;
     int		n;
 
-    srand((unsigned)time(NULL));
+//    srand((unsigned)time(NULL));
+    srand((unsigned)clock());
 
     initwithcmdline(argc, argv, &start);
 

@@ -34,11 +34,12 @@ static char const *smiley[] = { "   ", ":-)", "8-|", ":-D", "B-)" };
  * if the timer has been turned off, or else holds the time at which
  * the timer began running.
  */
-static time_t		starttime = -1;
+clock_t		starttime = -1;
 
 /* The timer's current value.
  */
-static int		timer = 0;
+clock_t		timer = 0;
+//static int		timer = 0;
 
 /* The index of the bottommost line.
  */
@@ -90,7 +91,8 @@ void settimer(int action)
 	timer = 0;
 	starttime = -1;
     } else if (action > 0)
-	starttime = time(NULL) - timer;
+//	starttime = time(NULL) - timer;
+	starttime = (clock()/CLOCKS_PER_SEC) - timer; // NOTE: time() requires an RTC; clock is in "ticks"
     else
 	starttime = 0;
 }
@@ -124,7 +126,8 @@ static void displaytimer(void)
 {
     int	y, x;
 
-	timer = time(NULL) - starttime;
+//	timer = time(NULL) - starttime;
+	timer = (clock()/CLOCKS_PER_SEC) - starttime; // time() requires RTC.
     if (timer > 0) {
 	getyx(stdscr, y, x);
 	mvprintw(0, timercolumn, "%7d", timer);
