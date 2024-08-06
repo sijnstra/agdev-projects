@@ -45,6 +45,7 @@ The AgDev C libraries have a lot of quirks that need levelling out to make thing
 <li> time functions appear to not work, or work differently. This needs fixing in this game.
 <li> the characters used for framing need updating to custom characters or I need to switch to Terminal mode.
 <li> one consideration is that Terminal mode will make it a lot easier to apply more attributes to characters.
+<li> the time(NULL) function requires the RTC to be in available. clock() does not, however, it is in TICKs, not seconds.
 
 # Thanks
 <li>cmines was originally is copyright (C) 2000 by Brian Raiter <breadbox@muppetlabs.com> and shared under GPL.
