@@ -6,7 +6,7 @@ Minimal changes were required for this onem which means the `acurses.h` library 
 
 The main changes were:
 <li>replacing `getch()` with `wgetch()` to use the non-blocking version, otherwise the screen is only updated when you press a key.</li>
-<li>adding a small delay before erasing the screen using `napms(10)` to emphasize the time the screen is available.</li>
+<li>adding a small delay before erasing the screen using `napms(10)` to emphasize the time the screen is available. NOTE: this has made visibility much worse on real hardware.</li>
 
 Don't forget you can edit constants.h to your liking.
 
