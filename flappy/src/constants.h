@@ -1,0 +1,18 @@
+#define PIPECOLOR 2
+#define BIRDCOLOR 3
+#define DEADCOLOR 4
+#define COLOR_DEFAULT -1
+
+#define GAP 10
+#define PAD 10
+#define PIPEWIDTH 5
+#define WINDOWWIDTH 80
+#define WINDOWHEIGHT 25
+#define BIRDX WINDOWWIDTH / 4
+#define QLEN WINDOWWIDTH / (2 * PAD + PIPEWIDTH) + 2
+#define BREATHERPOS 5
+
+#define GRAVITY 100.0
+#define WINGPOWER GRAVITY / -7.5
+#define FLAPCONSTRAINT GRAVITY / 25.0 
+#define SPEED -15.0
