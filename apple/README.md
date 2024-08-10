@@ -10,7 +10,7 @@
                888      888   
 
 ```
-
+# From the original author:
 This is a small game written in C. <br />
 Your task is to collect all the apples while avoiding enemies. <br />
 I do not recommend using the source code for learning C.
@@ -23,36 +23,12 @@ Have a good game!
  q - open menu <br />
 
 ## Screenshots
-![Screenshot](https://github.com/uriid1/scrfmp/blob/main/AppleWar/lvl0.png)
-![Screenshot](https://github.com/uriid1/scrfmp/blob/main/AppleWar/lvl5.png)
+![Screenshot](https://github.com/sijnstra/agdev-projects/blob/main/apple/title_Capture.PNG)
+![Screenshot](https://github.com/sijnstra/agdev-projects/blob/main/apple/Level%201%20Capture.PNG)
 
-# Running
-* You must have Ncurses and gcc installed to work.
+# Compiling
+You must have acurses (included in the src directory) and AgDev C installed.
 
-## For Ubuntu / Debian based
-```shell
-sudo apt-get install libncurses5-dev
-git clone https://github.com/uriid1/ascii-c-game
-cd ascii-c-game
-chmod +x game.sh
-./game.sh
-```
-
-## For Arch based
-```shell
-sudo pacman -S ncurses
-git clone https://github.com/uriid1/ascii-c-game
-cd ascii-c-game
-chmod +x game.sh
-./game.sh
-```
-
-## For MacOs
-```shell
-brew install ncurses
-git clone https://github.com/uriid1/ascii-c-game
-cd ascii-c-game
-chmod +x game.sh
-./game.sh
-```
+# Notes
+The redraw isn't very quick so the flickering is quite heavy. The non-blocking keyboard routines do not behave well.
 
