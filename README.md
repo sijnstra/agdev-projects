@@ -1,5 +1,5 @@
 # Shawn Sijnstra's Agon AgDev C development projects
-This is a collection of games that have been ported to the Agon Light platform, keeping code changed to a minimum. This meant the creation of 2 libraries so far, `getopt.h` and a minimalist version of curses which I've called `acurses.h`.
+This is a collection of games that have been ported to the Agon Light platform, built with [AgDev C](https://github.com/pcawte/AgDev) and keeping code changes to a minimum. This meant the creation of 2 libraries so far, `getopt.h` and a minimalist version of curses which I've called `acurses.h`.
 
 If you have an interest in z80 assembler, check out my [Agon z80 repo](https://github.com/sijnstra/agon-projects/).
 
