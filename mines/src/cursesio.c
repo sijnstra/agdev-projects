@@ -69,6 +69,9 @@ static int		silence = FALSE;
  */
 char const	       *programname = "";
 
+// Declare shutdown
+static void shutdown(void);
+
 /*
  * Timer functions
  */
@@ -196,6 +199,7 @@ void displaygame(cell const *field, int ysize, int xsize,
 
     move(ysize + 1, xsize * 2 + 4);
     displaytimer();
+    if (status==status_ignore) shutdown();
 }
 
 /* Display information about the various key commands. Each element in
@@ -436,9 +440,19 @@ int ioinitialize(int updatetimerflag, int showsmileysflag, int silenceflag,
 #endif
     minecell = '*' | attr;
     boomcell = minecell | A_BOLD;
-    flagcell = 0x86 | A_NORMAL; // '+' | A_NORMAL; // replaced with obelisk
+    flagcell = 0x87 | A_NORMAL; // '+' | A_NORMAL; // replaced with obelisk
     badflagcell = 'x' | A_BOLD | attr;
-
+    uint32_t flagdata[] = {
+    	0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF000080,0xFF000080,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0x00000000,0x00000000,
+		0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+    };
+    char setflag[] = {23,0x00,0x92,0x87,0,0x87};
     // some Agon fun - replace the asterisk with a bomb. Todo: tidy this up on exit.
     vdp_redefine_character( 42,0x00,0x08,0x10,0x7C,0xFE,0xFA,0x7C,0x00);
     /*
@@ -451,8 +465,8 @@ int ioinitialize(int updatetimerflag, int showsmileysflag, int silenceflag,
     	0b01111100, 
     	0b00000000);
 	*/
-    // some Agon fun - replace the obelisk with a flag. Todo: tidy this up on exit.
-    vdp_redefine_character( 0x86,0x3E,0x24,0x3E,0x20,0x20,0x20,0xFC,0x00);
+    // some Agon fun - replace the double obelisk with a flag. Todo: tidy this up on exit.
+    vdp_redefine_character( 0x87,0x3E,0x24,0x3E,0x20,0x20,0x20,0xFC,0x00);
     /*
     	0b00111110, 
     	0b00100100, 
@@ -463,7 +477,28 @@ int ioinitialize(int updatetimerflag, int showsmileysflag, int silenceflag,
     	0b11111100, 
     	0b00000000);
 	*/
-
+	// VDU 23, 27, 0, n: Select bitmap n
+	vdp_select_bitmap( 0x87 );
+	vdp_load_bitmap( 8, 8, flagdata );
+	// VDU 23, 27, 1, w; h; b1, b2 ... bn: Load colour bitmap data into current bitmap
+	/* it doesn't work this way - it's width, height, *buffer)
+	vdp_load_bitmap( 8, 8,
+		0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF000080,0xFF000080,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0xFF0000FF,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0x00000000,0xFFFFFFFF,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+		0x00000000,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0x00000000,0x00000000,
+		0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000);
+	*/
+	// VDU 23, 0, &92, char, bitmapId;: Map character char to display bitmapId §§
+    fwrite(setflag,1,6,stdout);
+    // some Agon fun - replace the double obelisk with a flag. Todo: tidy this up on exit.
+    // Replace obelisk with extended "plus"
+    //vdp_redefine_character( 0x86,0x18,0x18,0x18,0xFF,0x18,0x18,0x18,0x18);
+	// technically in CP1252 the vertical line '|' is unbroken, with the 0xA6 being broken.	//vertical line
+	//vdp_redefine_character( '|',0x18,0x18,0x18,0x18,0x18,0x18,0x18,0x18);
     return TRUE;
 }
 
