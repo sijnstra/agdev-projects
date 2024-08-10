@@ -32,3 +32,5 @@ You must have acurses (included in the src directory) and AgDev C installed.
 # Notes
 The redraw isn't very quick so the flickering is quite heavy. The non-blocking keyboard routines do not behave well.
 
+Original game can be found here: [https://github.com/uriid1/ascii-c-game/]
+
