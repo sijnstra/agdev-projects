@@ -12,7 +12,7 @@
 #define QLEN WINDOWWIDTH / (2 * PAD + PIPEWIDTH) + 2
 #define BREATHERPOS 5
 
-#define GRAVITY 100.0
+#define GRAVITY 75.0
 #define WINGPOWER GRAVITY / -7.5
 #define FLAPCONSTRAINT GRAVITY / 25.0 
 #define SPEED -15.0

@@ -37,7 +37,7 @@ int main()
 			sumElapsed += elapsedTime;
 			score = 2.5 * sumElapsed + 0.5;
 
-			napms(10);	//screenshot++; while (screenshot>200){};
+			napms(20);	//screenshot++; while (screenshot>200){};
 			erase();
 
 			for (i = 0; i < QLEN; i++) {
