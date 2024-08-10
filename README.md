@@ -4,10 +4,14 @@ This is a collection of games that have been ported to the Agon Light platform, 
 If you have an interest in z80 assembler, check out my [Agon z80 repo](https://github.com/sijnstra/agon-projects/).
 
 These are the games that have been ported so far:
+<li>ASCII Bird</li>
 <li>Apple War</li>
 <li>Flappy Bird</li>
 <li>Minefield</li>
 <li>Simple Journey</li>
+
+# ASCII Bird
+[abird.bin](https://github.com/sijnstra/agdev-projects/tree/main/abird) - A different implementation of that classic one button game.
 
 # Apple War
 [awar.bin](https://github.com/sijnstra/agdev-projects/tree/main/apple) - A programming exercise that made a pleasant game to test the curses library.
@@ -15,7 +19,7 @@ These are the games that have been ported so far:
 # Flappy Bird
 [flappy.bin](https://github.com/sijnstra/agdev-projects/tree/main/flappy) - The classic one-button game.
 
-# Minefiled
+# Minefield
 [amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/apple) Classic minefield game. Modifies the font for flags and mines.
 
 # Simple Journey
