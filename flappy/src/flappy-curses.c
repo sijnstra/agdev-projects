@@ -8,7 +8,7 @@
 int main()
 {
 	int inputch, collisionFlag, i, pipePos, score;
-	int	screenshot = 0;
+//	int	screenshot = 0; for taking a cheeky screenshot
 	double sumElapsed;
 	char state;
 
@@ -37,7 +37,7 @@ int main()
 			sumElapsed += elapsedTime;
 			score = 2.5 * sumElapsed + 0.5;
 
-			napms(10);screenshot++; while (screenshot>200){};
+			napms(10);	//screenshot++; while (screenshot>200){};
 			erase();
 
 			for (i = 0; i < QLEN; i++) {
