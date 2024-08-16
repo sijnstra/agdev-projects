@@ -11,16 +11,19 @@ These are the games that have been ported so far:
 <li>Simple Journey</li>
 
 # ASCII Bird
-[abird.bin](https://github.com/sijnstra/agdev-projects/tree/main/abird) - A different implementation of that classic one button game.
+[abird.bin](https://github.com/sijnstra/agdev-projects/tree/main/abird) - A different implementation of that classic one button game made using plain ASCII characters.
 
 # Apple War
-[awar.bin](https://github.com/sijnstra/agdev-projects/tree/main/apple) - A programming exercise that made a pleasant game to test the curses library.
+[awar.bin](https://github.com/sijnstra/agdev-projects/tree/main/apple) - A programming exercise that made a pleasant game to test the curses library, using plain ASCII characters with colour.
+
+# Flagon - Flappy Agon Bird
+[flagon.bin](https://github.com/sijnstra/agdev-projects/tree/main/flagon) - the ASCII bird game modifieid to use bitmaps that have been mapped to text characters, so still using the curses libraru and the same game engine.
 
 # Flappy Bird
-[flappy.bin](https://github.com/sijnstra/agdev-projects/tree/main/flappy) - The classic one-button game.
+[flappy.bin](https://github.com/sijnstra/agdev-projects/tree/main/flappy) - The classic one-button game using only plain ASCII characters.
 
 # Minefield
-[amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/mines) Classic minefield game. Modifies the font for flags and mines.
+[amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/mines) Classic minefield game. Modifies the font for flags and mines, using bitmaps and font replacement.
 
 # Simple Journey
 [journey.bin](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a 2D terrain simulation in text format.
