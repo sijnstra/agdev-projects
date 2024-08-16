@@ -23,8 +23,8 @@ Have a good game!
  q - open menu <br />
 
 ## Screenshots
-![Screenshot](https://github.com/sijnstra/agdev-projects/blob/main/apple/title_Capture.PNG)
-![Screenshot](https://github.com/sijnstra/agdev-projects/blob/main/apple/Level%201%20Capture.PNG)
+![Screenshot](./title_Capture.PNG)
+![Screenshot](./Level%201%20Capture.PNG)
 
 # Compiling
 You must have acurses (included in the src directory) and AgDev C installed.

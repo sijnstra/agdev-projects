@@ -20,7 +20,7 @@ These are the games that have been ported so far:
 [flappy.bin](https://github.com/sijnstra/agdev-projects/tree/main/flappy) - The classic one-button game.
 
 # Minefield
-[amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/apple) Classic minefield game. Modifies the font for flags and mines.
+[amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/mines) Classic minefield game. Modifies the font for flags and mines.
 
 # Simple Journey
 [journey.bin](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a 2D terrain simulation in text format.
