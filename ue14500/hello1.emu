@@ -1,0 +1,111 @@
+200
+1111001101
+; Copy comments to output.
+; Quit the emulator after running.
+; Set the data line to 1 so we can do IEN 1 to initialize. We will not change
+; any data after this.
+D;
+; Initialize the CPU. This is the generic initialization to ensure a known CPU
+; state in any possible case, which is not really needed fully for this program.
+7250k; IEN
+; Do input enable twice since the first may be skipped if the CPU
+7250k; IEN
+; booted with the skip flag high.
+7254k; OEN
+; Output enable on.
+3610k; ONE
+; 1 -> RR, 0 -> Carry.
+3654k; XOR
+; 1^1 (0) -> RR.
+b;
+; 'H' = 0x48 = 01001000
+7210k; STO
+7210k; STO
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+7214k; STOC
+7210k; STO
+; 'e' = 0x65 = 01100101
+7214k; STOC
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'l' = 0x6c = 01101100
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'l' = 0x6c = 01101100
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'o' = 0x6f = 01101111
+7214k; STOC
+7214k; STOC
+7214k; STOC
+7214k; STOC
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'r' = 0x72 = 01110010
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'l' = 0x6c = 01101100
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; 'd' = 0x64 = 01100100
+7210k; STO
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+7214k; STOC
+7214k; STOC
+7210k; STO
+; '!' = 0x21 = 00100001
+7214k; STOC
+7210k; STO
+7210k; STO
+7210k; STO
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+; '\n' = 0x0a = 00001010
+7210k; STO
+7214k; STOC
+7210k; STO
+7214k; STOC
+7210k; STO
+7210k; STO
+7210k; STO
+7210k; STO
+q
