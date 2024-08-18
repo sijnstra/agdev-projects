@@ -9,6 +9,7 @@ These are the games that have been ported so far:
 <li>Flappy Bird</li>
 <li>Minefield</li>
 <li>Simple Journey</li>
+<li>UE14500</li>
 
 # ASCII Bird
 [abird.bin](https://github.com/sijnstra/agdev-projects/tree/main/abird) - A different implementation of that classic one button game made using plain ASCII characters.
@@ -28,12 +29,15 @@ These are the games that have been ported so far:
 # Simple Journey
 [journey.bin](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a 2D terrain simulation in text format.
 
+# UE14500
+[US14500](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a tube computer emulator, along with an assembler also provided. There's a lot to explain on this one, so there are mainly links to what it is from the original authors.
+
 # Agon curses - acurses.h
 The curses library is a commonly found POSIX/UNIX library (with multiple variations) to use as a common way to take advantage of advanced terminal capabilities without needing to heavily tailor each program.
 
 I've created from scratch `acurses.h` to cover a large enough amount of the curses library (it's enomous!) to mines to work. The intent here is to keep developing and make it more integrated with the AgDev compiler once it's more complete and stabilised.
 
-New features since initial release include being able to use the `box()` function, non-blocking `wgetch()` and moving the font tweaks into the library.
+New features since initial release include being able to use the `box()` function, non-blocking `wgetch()` and moving the font tweaks into the library. Additional text manipulation features, more correct use of types, and other bonus features are now in version 0.3. The current version is in the UE14500 src directory.
 
 Bottom line: `acurses.h` is very much BETA and needs work, including getting more to work as well as heavily optimizing (in pre-defined assembler).
 
