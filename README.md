@@ -30,7 +30,7 @@ These are the games that have been ported so far:
 [journey.bin](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a 2D terrain simulation in text format.
 
 # UE14500
-[US14500](https://github.com/sijnstra/agdev-projects/tree/main/simple) is a tube computer emulator, along with an assembler also provided. There's a lot to explain on this one, so there are mainly links to what it is from the original authors.
+[UE14500](https://github.com/sijnstra/agdev-projects/tree/main/ue14500) is a tube computer emulator, along with an assembler also provided. There's a lot to explain on this one, so there are mainly links to what it is from the original authors.
 
 # Agon curses - acurses.h
 The curses library is a commonly found POSIX/UNIX library (with multiple variations) to use as a common way to take advantage of advanced terminal capabilities without needing to heavily tailor each program.
