@@ -1,3 +1,7 @@
+This is a sideways scrolling demo of text based VDP capabilities, converted to compile on Agon using AgDev.
+
+Here's the original Readme from https://github.com/Laynholt/simple_journey
+
 # Simple Journey
 Simple console game. \ O /
 
