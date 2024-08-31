@@ -2,6 +2,7 @@
 // Copyright Shawn Sijnstra (c) 2024
 // GPLv3 License
 // Please let me know if you use the library, and anything you can add is welcome
+// NOTE: double buffering CAN work on SOME games but only if every frame is a full redraw.
 
 // See if we can build a small curses library
 // This version is using VDP calls so does not use any terminal characteristics
@@ -12,27 +13,43 @@
 #include <agon/vdp_vdu.h>
 #include <agon/vdp_key.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-#ifndef __NCURSES_H
-#define __NCURSES_H
+#ifndef __ACURSES_H
+#define __ACURSES_H
 
 #define CURSES 1
 #define CURSES_H 1
 
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 0
-#define NCURSES_VERSION_MINOR 1
+#define NCURSES_VERSION_MINOR 3
 #define NCURSES_VERSION_PATCH 0
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "0.2"
-
-#endif
+#define NCURSES_VERSION "0.3"
 
 typedef unsigned chtype;
-typedef	chtype	attr_t;		/* ...must be at least as wide as chtype */
+typedef	chtype	attr_t;		
+/* attr_t must be at least as wide as chtype as it is the attributes without the character
+
+chtype has the following bitwise format at the moment:
+ upper bit   lower bits
+[765][43210] [76543210]
+attr  color  character
+*/
+
+typedef unsigned short WINDOW;
+
+#undef TRUE
+#define TRUE    1
+#undef FALSE
+#define FALSE   0
+
+#undef OK
+#define OK	TRUE
 
 /* colors */
 #define COLOR_BLACK	0
@@ -47,7 +64,13 @@ typedef	chtype	attr_t;		/* ...must be at least as wide as chtype */
 
 #define COLORS 16	//otherwise there are too many assumptions about how many colour pairs we can have?
 #define COLOR_PAIRS 31
-#define stdscr 0	//there is only 1 screen
+//#define stdscr 0	
+#undef stdscr
+static WINDOW	*stdscr;  //there is only 1 screen at the moment
+#undef curscr
+static WINDOW	*curscr;
+#define LINES 30	//this really shouldn't be hard coded...
+#define COLS 80		//as above. very oldskool approach.
 
 /* CP437
 #define ACS_BTEE	0xCA	//'+'	//bottom tee
@@ -79,11 +102,16 @@ typedef	chtype	attr_t;		/* ...must be at least as wide as chtype */
 #define ACS_URCORNER	0x86 //'+'	//upper right-hand corner
 #define ACS_VLINE	'|'	//vertical line
 
-#define KEY_UP	11
-#define KEY_RIGHT 21
-#define KEY_DOWN 10
-#define KEY_LEFT 8
+#define KEY_UP		11
+#define KEY_RIGHT	21
+#define KEY_DOWN	10
+#define KEY_LEFT	8
 #define KEY_ENTER	13
+#define KEY_BREAK	27
+
+#define KEY_F0		0x9f - 1		/* Function keys as they come via vkeycode - F1 is 0x9f */
+#define KEY_F(n)	(KEY_F0+(n))	/* Value of function key n */
+
 /*
 A_STANDOUT	0	1
 A_UNDERLINE	1	2
@@ -105,7 +133,7 @@ A_ALTCHARSET	8	256
 #define A_BOLD		32
 */
 #define A_NORMAL	0
-#define A_STANDOUT	0
+#define A_STANDOUT	(32 << 8)
 #define A_UNDERLINE	0
 #define A_REVERSE	0
 #define A_BLINK		0
@@ -114,21 +142,31 @@ A_ALTCHARSET	8	256
 
 #define getyx(win,y,x)   	(y = getcury(win), x = getcurx(win))
 #define getmaxyx(win,y,x)	(y = getmaxy(win), x = getmaxx(win))
-int addstr(const char *str);
+#define crmode()		cbreak()
+#define nocrmode()		nocbreak()
 
-short global_color_pairs [COLOR_PAIRS*2];	//global to acurses only
-bool blocking=true;							//default is read using blocking mode
+
+int addstr(const char *str);
+int addch(const chtype ch);
+
+static short global_color_pairs [COLOR_PAIRS*2];	//global to acurses only
+
+static short _blocking_x = true;							//default is read using _blocking mode
+
 
 static SYSVAR *sv;
 char _curse_buf[512];
 
-static KEY_EVENT prev_key_event = { 0 };
-char _current_key = 0;
+KEY_EVENT prev_key_event = { 0 };
+static char _current_key = 0;
 
-void start_color() {
+static clock_t _global_delay = 0;
+
+int start_color() {
 	// This routine is supposed to define the global variable for number of colours and number of colour pairs
 	vdp_set_text_colour( COLOR_WHITE );
 	vdp_set_text_colour( COLOR_BLACK + COLOR_BG);
+	return true;
 };
 
 int erase(void){
@@ -139,9 +177,23 @@ int clear(void){
     vdp_clear_screen(); return true;
 };
 
-int clearok(int win, bool state){
+int wclear(WINDOW *win){
+    vdp_clear_screen(); return true;
+};
+
+int clearok(WINDOW *win, bool state){
     vdp_clear_screen();
     return true;
+};
+
+/*
+	Normally, the hardware cursor is left at the location of the window cursor being refreshed.
+	The leaveok option allows the cursor to be left wherever the update happens to leave it.
+	It is useful for applications where the cursor is not used, since it reduces the need for cursor motions.
+	Not implemented really here.
+*/
+int leaveok(WINDOW *win, bool bf){
+	return false;
 };
 
 void key_event_handler( KEY_EVENT key_event )
@@ -156,9 +208,11 @@ void key_event_handler( KEY_EVENT key_event )
 };
 
 
-int initscr() {
+WINDOW *initscr() {
+	WINDOW *newwin = malloc(sizeof(WINDOW));
 	sv = vdp_vdu_init();
-    vdp_mode( 3 );	//Mode 3 is 80x30
+//    vdp_mode( 3 );	//Mode 3 is 80x30 with 64 colours
+    vdp_mode( 132 ); //is 80x30, 16 colour version with double buffering. Can cause issues.
     vdp_clear_screen();
 	vdp_get_scr_dims( true );
     vdp_logical_scr_dims( false );
@@ -168,15 +222,15 @@ int initscr() {
 	// technically in CP1252 the vertical line '|' is unbroken, with the 0xA6 being broken.	//vertical line
 	vdp_redefine_character( '|',0x18,0x18,0x18,0x18,0x18,0x18,0x18,0x18);
 
-    return true;
+    return newwin;
 };
 
-int getcury(int win)
+int getcury(WINDOW *win)
 {
 	return sv->cursorY;
 };
 
-int getcurx(int win)
+int getcurx(WINDOW *win)
 {
 	return sv->cursorX;
 };
@@ -185,13 +239,13 @@ int getcurx(int win)
 //#define sysvar_cursorY		    0x08    // 1: Cursor Y position
 //we might need this:	vdp_get_scr_dims( true );
 
-int getmaxy(int win)
+int getmaxy(WINDOW *win)
 {
 //	vdp_get_scr_dims( true );
 	return sv->scrRows;
 };
 
-int getmaxx(int win)
+int getmaxx(WINDOW *win)
 {
 	return sv->scrCols;
 };
@@ -207,7 +261,7 @@ bool has_colors(void) {
 };
 
 bool can_change_color(void) {
-	return false;	// yes the VDU is capable but not done yet.
+	return true;	// yes the VDU is capable
 };
 
 // this should return the content of a programmed colour but I don't think this can be done yet.
@@ -250,9 +304,23 @@ int printw(const char *fmt,...)
     return code;
 };
 
+int wprintw(WINDOW *win, const char *fmt,...)
+{
+    va_list argp;
+    int code;
+
+    va_start(argp, fmt);
+    vsprintf(_curse_buf, fmt, argp);
+	code = addstr(_curse_buf);
+    va_end(argp);
+
+    return code;
+};
+
+
 //int vw_printw(WINDOW *win, const char *fmt, va_list varglist);
 
-int vw_printw(int win, const char *fmt,...)
+int vw_printw(WINDOW *win, const char *fmt,...)
 {
 	char *buf;
     va_list argp;
@@ -267,6 +335,20 @@ int vw_printw(int win, const char *fmt,...)
 };
 
 int mvprintw(int y, int x, const char *fmt, ...)
+{
+
+    va_list argp;
+    int code;
+    vdp_cursor_tab( x, y);
+    va_start(argp, fmt);
+    vsprintf(_curse_buf, fmt, argp);
+	code = addstr(_curse_buf);
+    va_end(argp);
+
+    return code;
+};
+
+int mvwprintw(WINDOW *win, int y, int x, const char *fmt, ...)
 {
 
     va_list argp;
@@ -317,14 +399,26 @@ int use_default_colors(void)
 	return false;
 };
 
+// VDU 23, 0, &C3: Swap the screen buffer and/or wait for VSYNC
+// void vdp_swap( void );
+// in theory we could use this to draw to the alternate frame, and swap at refresh, thus eliminating flicker.
+// double-buffered will mean we have to significantly reduce resolution either in colour palette or screen size.
 int refresh(void)
 {
+	vdp_swap();
 	return true;
 };
+
+int wrefresh (WINDOW *win)
+{
+	return refresh();
+};
+
 
 //dump font and reset text mode to bright white on black. NOTE: assumes video mode has at least 16 colours
 int endwin(void)
 {
+	vdp_mode(3);	//single buffer, 64 colours
 	vdp_reset_system_font();
 	vdp_key_reset_interrupt();
 	vdp_set_text_colour( COLOR_WHITE + 8 );
@@ -354,6 +448,12 @@ int attron(const chtype attrs)
 	return true;
 };
 
+int wattron(WINDOW *win, int attrs)
+{
+	return attron(attrs);
+};
+
+
 // I'm currently turning EVERYTHING off, which is not correct, but will do for now.
 int attroff(int attrs)
 {
@@ -362,13 +462,43 @@ int attroff(int attrs)
 	return true;
 };
 
+int wattroff(WINDOW *win, int attrs)
+{
+	return attroff(attrs);
+};
+
+// The routine wattr_get returns the current attribute and color pair for the given window
+// I'm not currently tracking this. It would need to be done at every attr change.
 int attr_get (attr_t *attr, int *n, int *m)
 {
 	return false;
 };
 
+//int wchgat(WINDOW *win, int n, attr_t attr, short color, const void *opts)
+//The routine chgat changes the attributes of a given number of characters starting at the current cursor location of stdscr
+//It does not update the cursor and does not perform wrapping.
+// A character count of -1 or greater than the remaining window width means to change attributes all the way to the end of the current line.
+//The wchgat function generalizes this to any window; the mvwchgat function does a cursor move before acting. 
+//NOTE: I'm changing the currently applied attributes, so this may not work as expected for any immediately following characters.
+
+int mvwchgat(WINDOW *win, int y, int x, int n, attr_t attr, short color, const void *opts)
+{
+	int	i;
+	uint8_t ch;
+    vdp_cursor_tab( x, y); //set up the cursor to make this easier
+//uint8_t vdp_return_ascii_code_at_position( int x, int y );
+	for (i=x;i<(x+n);i++){
+		ch = vdp_return_ascii_code_at_position( i, y);
+		addch(ch | attr | (color<<8));
+	};
+
+    vdp_cursor_tab( x, y);
+    return true;
+
+};
+
 //int wmove(WINDOW *win, int y, int x);
-int wmove(int win, int y, int x)
+int wmove(WINDOW *win, int y, int x)
 {
     vdp_cursor_tab( x, y);
 
@@ -404,11 +534,21 @@ int addch(const chtype ch)
 	return true;
 };
 
+int waddch(WINDOW *win, const chtype ch)
+{
+	return addch(ch);
+}
+
 int mvaddch(int y, int x, const chtype ch)
 {
     vdp_cursor_tab( x, y);
     return addch(ch);
 };
+
+int mvwaddch(WINDOW *win, int y, int x, const chtype ch)
+{
+	return mvaddch(y, x, ch);
+}
 
 // We don't have echo yet.
 int noecho (void)
@@ -421,7 +561,8 @@ int nonl (void)
 	return false;
 };
 
-// The halfdelay routine is used for half-delay mode, which is similar to cbreak mode in that characters typed by the user are immediately available to the program. However, after blocking for tenths tenths of seconds, ERR is returned if nothing has been typed. The value of tenths must be a number between 1 and 255. Use nocbreak to leave half-delay mode.
+// The halfdelay routine is used for half-delay mode, which is similar to cbreak mode in that characters typed by the user are immediately available to the program.
+//However, after blocking for tenths tenths of seconds, ERR is returned if nothing has been typed. The value of tenths must be a number between 1 and 255. Use nocbreak to leave half-delay mode.
 
 int halfdelay(int tenths)
 {
@@ -439,8 +580,17 @@ int addstr(const char *str)
 int mvaddstr(int y, int x, const char *str)
 {
     vdp_cursor_tab( x, y);
-    addstr(str);
-    return true;
+    return addstr(str);
+};
+
+int mvwaddstr(WINDOW *win, int y, int x, const char *str)
+{
+	return mvaddstr(y, x, str);
+};
+
+int waddstr(WINDOW *win, const char *str)
+{
+	return addstr(str);
 };
 
 int beep(void)
@@ -449,15 +599,15 @@ int beep(void)
 	return true;
 };
 
-int keypad(int win, bool bf)
+int keypad(WINDOW *win, bool bf)
 {
 	return false;
 };
 
 //try clearing backlog
-int nodelay(int win, bool bf)
+int nodelay(WINDOW *win, bool bf)
 {
-	blocking = !(bf);
+	_blocking_x = !(bf);
 	if (bf) {
 	vdp_set_key_event_handler( key_event_handler );
 	vdp_update_key_state();
@@ -469,9 +619,10 @@ int nodelay(int win, bool bf)
 	return true;
 }
 
-//partial implementation - positive delay not done yet.
-void wtimeout(int win, int delay)
+//partial implementation
+void wtimeout(WINDOW *win, int delay)
 {
+	_global_delay = delay;
 	if (delay<0)
 		{nodelay(win,false);}
 	else
@@ -483,16 +634,37 @@ void timeout(int delay)
 	wtimeout(stdscr, delay);
 };
 
-char wgetch(int win)
+char wgetch(WINDOW *win)
 {
+	clock_t timer = clock() + _global_delay/4;
+
 	char	key;
-	if (blocking) {
-		return getch();
+	if (_blocking_x) {
+		key = getch();
+		if (key!=0) return key;
+		key = sv->vkeycode;
+		if (((int)key>KEY_F0)&&((int)key<(KEY_F0+13)))
+			{return key;}
+		else
+			return 0;
 	}
 	else {
+		vdp_update_key_state();key = _current_key;	//need this so that key is collected at least once
+		while ( (clock() < timer) && (key = -1)){
 		vdp_update_key_state();
-		key = _current_key;
-		return key;
+		key = _current_key;};
+		if (key!=-1) {return key;}
+		else
+			return 0;
+/*
+			if (key!=0) return key;
+		key = sv->vkeycode;
+		if (((int)key>KEY_F0)&&((int)key<(KEY_F0+13)))
+			{return key;}
+		else
+			return 0;
+			//test code - doesn't seem to work.
+*/
 	};
 };
 
@@ -530,12 +702,25 @@ int nocbreak()
 // Hence, these routines provide the same functionality as nodelay, plus the additional capability of being
 // able to block for only delay milliseconds (where delay is positive).
 
+//These are meant to truncate, but for now I will leave as-is.
+int hline(chtype ch, int n){
+	int	i;
+	for(i=0;i<n;i++) addch(ch);
+	return true;
+};
+
+int whline(WINDOW *win, chtype ch, int n){
+	return hline (ch,n);
+};
+
+int vline(chtype ch, int n);
+int wvline(WINDOW *win, chtype ch, int n);
 
 #define box(win, v, h)		wborder(win, v, v, h, h, 0, 0, 0, 0)
 //#define RENDER_WITH_DEFAULT(ch,def) w ## ch = _nc_render(win, (ch == 0) ? def : ch)
 #define RENDER_WITH_DEFAULT(ch,def) ch = ((ch == 0) ? def : ch)
 
-int wborder(int win,
+int wborder(WINDOW *win,
 	chtype ls, chtype rs,
 	chtype ts, chtype bs,
 	chtype tl, chtype tr,
@@ -575,7 +760,9 @@ int wborder(int win,
 
 int	napms(int ms)
 {
-	clock_t timer = clock(); ms=ms/4;
+	clock_t timer = clock(); ms=ms/8;
 	while ( clock() < timer + ms){};
 	return true;
 };
+
+#endif //__ACURSES_H
