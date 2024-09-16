@@ -7,6 +7,7 @@ These are the games that have been ported so far:
 <li>ASCII Bird</li>
 <li>Apple War</li>
 <li>Flappy Bird</li>
+<li>Galaxis</li>
 <li>Minefield</li>
 <li>Simple Journey</li>
 <li>UE14500</li>
@@ -22,6 +23,9 @@ These are the games that have been ported so far:
 
 # Flappy Bird
 [flappy.bin](https://github.com/sijnstra/agdev-projects/tree/main/flappy) - The classic one-button game using only plain ASCII characters.
+
+# Galaxis
+[galaxis.bin](https://github.com/sijnstra/agdev-projects/tree/main/galaxis) - Find interstellar lifeboats in a starfield in this curses-based clone of the nifty little Macintosh freeware game Galaxis.
 
 # Minefield
 [amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/mines) Classic minefield game. Modifies the font for flags and mines, using bitmaps and font replacement.

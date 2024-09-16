@@ -1,0 +1,43 @@
+= galaxis(6) =
+:doctype: manpage
+// SPDX-FileCopyrightText: (C) Eric S. Raymond <esr@thyrsus.com>
+// SPDX-License-Identifier: BSD-2-Clause
+
+== NAME ==
+galaxis - rescue lifeboats lost in interstellar space
+
+== SYNOPSIS ==
+galaxis
+
+[[description]]
+== DESCRIPTION ==
+
+Lifeboats from a crippled interstellar liner are adrift in a
+starfield.  To find them, you can place probes that look in all eight
+compass directions and tell you how many lifeboats they see.  If you
+drop a probe directly on a lifeboat it will be revealed immediately.
+Your objective: find the lifeboats as quickly as possible, before the
+stranded passengers run out of oxygen!
+
+This is a UNIX-hosted, curses-based clone of the nifty little Macintosh
+freeware game Galaxis.  It doesn't have the super-simple, point-and-click
+interface of the original, but compensates by automating away some of the
+game's simpler deductions.
+
+The game screen includes a description
+of all commands, including "?" for detailed help.
+
+[[authors]]
+== AUTHORS ==
+The Macintosh game was designed and written by Christian Franz
+<cfranz@iiic.ethz.ch>.  This version was cloned by Eric S. Raymond
+<esr@snark.thyrsus.com>.  See ESR's home page at
+http://www.catb.org/~esr/ for updates and other resources.
+
+
+[[bugs]]
+== BUGS ==
+This really ought to be an X game, but that would have been too much
+like work.
+
+// end
