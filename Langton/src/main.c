@@ -3,7 +3,8 @@
  *          - if ant is on white tile, turn clockwise, turn current tile black, then move forward one space
  *          - if ant is on black tile, turn counterclockwise, turn current tile white, then move forward one space
  *  
- *  license: GPL 3.0        Author: github/return5
+ *  license: GPL 3.0        Original Author: github/return5
+ *  Agon version tweaks and bugfixes by Shawn Sijnstra 2024
  *
  *  Copyright (C) <2020>  <return5>
  *
