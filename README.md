@@ -27,6 +27,9 @@ These are the games that have been ported so far:
 # Galaxis
 [galaxis.bin](https://github.com/sijnstra/agdev-projects/tree/main/galaxis) - Find interstellar lifeboats in a starfield in this curses-based clone of the nifty little Macintosh freeware game Galaxis.
 
+# Langton ant
+[ant.bin](https://github.com/sijnstra/agdev-projects/tree/main/Langton) - simple implementation of Langton's ant in C using ncurses, optimised for Agon.
+
 # Minefield
 [amines.bin](https://github.com/sijnstra/agdev-projects/tree/main/mines) Classic minefield game. Modifies the font for flags and mines, using bitmaps and font replacement.
 
