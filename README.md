@@ -40,7 +40,7 @@ These are the games that have been ported so far:
 [UE14500](https://github.com/sijnstra/agdev-projects/tree/main/ue14500) is a tube computer emulator, along with an assembler also provided. There's a lot to explain on this one, so there are mainly links to what it is from the original authors.
 
 # UE14500-asm
-[UE14500-asm](https://github.com/sijnstra/agdev-projects/tree/main/ue14500) is the matching source and makefile to compile the assembler for UE14500 yourself. This is provided courtesy of Turboss.
+[UE14500-asm](https://github.com/sijnstra/agdev-projects/tree/main/ue14500-asm) is the matching source and makefile to compile the assembler for UE14500 yourself. This is provided courtesy of Turboss.
 
 # Agon curses - acurses.h
 The curses library is a commonly found POSIX/UNIX library (with multiple variations) to use as a common way to take advantage of advanced terminal capabilities without needing to heavily tailor each program.
